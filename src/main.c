@@ -34,5 +34,6 @@ main(int argc, char **argv)
 
 	char *file = load_file(argv[1]);
 	struct Token *token_list = tokenize(file);
+	print_tokens(token_list);
 	return 0;
 }

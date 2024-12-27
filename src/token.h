@@ -3,8 +3,17 @@
 enum TYPE {
 	INSTR,
 	NUM,
-	ADR,
 	REG,
+};
+
+enum REG {
+	A = 0,
+	B,
+	C,
+	D,
+	E,
+	PSW,
+	SP,
 };
 
 /* queue */

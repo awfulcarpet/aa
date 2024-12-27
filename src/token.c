@@ -79,6 +79,36 @@ strhex_to_dec(char *num, int len) {
 	return n;
 }
 
+static struct Token *
+enqueue_literal(struct Token *head, char *num_str)
+{
+	int len = strlen(num_str);
+	head = enqueue(head, NUM, strhex_to_dec(num_str, 2));
+
+	/* we have two byte num */
+	if (len > 2) {
+		head = enqueue(head, NUM, strhex_to_dec(num_str + 2, 2));
+	}
+	return head;
+}
+
+static struct Token *
+enqueue_reg(struct Token *head, char *reg)
+{
+	if (!strcmp(reg, "sp")) {
+		return enqueue(head, REG, SP);
+	}
+
+	if (!strcmp(reg, "PSW")) {
+		return enqueue(head, REG, PSW);
+	}
+
+	if (reg[0] >= 'A' && reg[0] <= 'E')
+		return enqueue(head, REG, reg[0] - 'A');
+
+	return enqueue(head, REG, reg[0] - 'a');
+}
+
 struct Token *
 tokenize(char *buf)
 {
@@ -93,31 +123,45 @@ tokenize(char *buf)
 				break;
 			}
 
-			/* num */
-			if (tok[0] == '$') {
-				int len = strlen(&tok[1]);
-				head = enqueue(head, NUM, strhex_to_dec(&tok[1], 2));
+			printf("%s\n", tok);
 
-				/* we have two byte num */
-				if (len > 2) {
-					head = enqueue(head, NUM, strhex_to_dec(&tok[3], 2));
+			/* two arg */
+			char *i = NULL;
+			if ((i = strchr(tok, ',')) != NULL) {
+				if (tok[0] == '$') {
+					head = enqueue_literal(head, &tok[1]);
+				} else {
+					head = enqueue_reg(head, tok);
+				}
+
+				if (i[1] == '$') {
+					head = enqueue_literal(head, i + 2);
+				} else {
+					head = enqueue_reg(head, i + 1);
 				}
 			}
 
-			printf("%s\n", tok);
+			/* num */
+			if (tok[0] == '$') {
+				head = enqueue_literal(head, &tok[1]);
+				continue;
+			}
 		} while ((tok = strtok(NULL, " ")) != NULL);
-			printf("\n");
+		printf("\n");
 	} while ((line = strtok_r(line_ptr, "\n", &line_ptr)) != NULL);
-
-	print_tokens(head);
 	return head;
 }
 
 void
 print_tokens(struct Token *head)
 {
+	char *type[] = {
+		"INSTR",
+		"NUM",
+		"REG",
+	};
 	while (head != NULL) {
-		printf("%d %02x\n", head->type, head->val);
+		printf("%s %02x\n", type[head->type], head->val);
 		head = head->next;
 	}
 }

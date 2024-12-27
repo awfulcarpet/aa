@@ -5,5 +5,7 @@ $f0
 $1f
 $000f
 $feab
+MVI B,$02
+IN $04
 INX B ; inc b to 1
 HLT ; stop cpu
