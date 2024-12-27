@@ -57,7 +57,7 @@ strtok_r(char *buf, char *delim, char **save_ptr)
 }
 
 /* converts int version of decimal string into real decimal
- * ex: dechex = 10
+ * ex: num = 10
  * returns 16
 */
 static int
