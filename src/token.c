@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "token.h"
 
@@ -39,10 +40,48 @@ dequeue(struct Token **head)
 	return tmp;
 }
 
+char *
+strtok_r(char *buf, char *delim, char **save_ptr)
+{
+	for (int i = 0; buf[i] != '\0'; i++) {
+		for (int j = 0; delim[j] != '\0'; j++) {
+			if (buf[i] == delim[j]) {
+				buf[i] = '\0';
+				*save_ptr = buf + i + 1;
+				return buf;
+			}
+		}
+	}
+	return NULL;
+}
+
 struct Token *
 tokenize(char *buf)
 {
-	return NULL;
+	struct Token *head = NULL;
+	char *line_ptr = NULL;
+	char *line = strtok_r(buf, "\n", &line_ptr);
+	do {
+		char *tok = strtok(line, " ");
+		do {
+			/* skip rest of line if comments */
+			if (tok[0] == ';') {
+				break;
+			}
+
+			/* num */
+			/* for now treat the literal as binary */
+			if (tok[0] == '$') {
+				head = enqueue(head, NUM, atoi(&tok[1]));
+			}
+
+			printf("%s\n", tok);
+		} while ((tok = strtok(NULL, " ")) != NULL);
+			printf("\n");
+	} while ((line = strtok_r(line_ptr, "\n", &line_ptr)) != NULL);
+
+	print_tokens(head);
+	return head;
 }
 
 void
