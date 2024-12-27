@@ -95,7 +95,7 @@ enqueue_literal(struct Token *head, char *num_str)
 static struct Token *
 enqueue_reg(struct Token *head, char *reg)
 {
-	if (!strcmp(reg, "sp")) {
+	if (!strcmp(reg, "SP")) {
 		return enqueue(head, REG, SP);
 	}
 
@@ -125,6 +125,7 @@ tokenize(char *buf)
 
 			printf("%s\n", tok);
 
+
 			/* two arg */
 			char *i = NULL;
 			if ((i = strchr(tok, ',')) != NULL) {
@@ -146,6 +147,17 @@ tokenize(char *buf)
 				head = enqueue_literal(head, &tok[1]);
 				continue;
 			}
+
+			/* is it a instruction? */
+			/* TODO: this is a temporary check */
+			if (strlen(tok) >= 2 && strlen(tok) <= 3 && strncmp(tok, "SP", 2)) {
+				/* TODO actually implement the opcode inside */
+				head = enqueue(head, INSTR, tok[0]);
+				continue;
+			}
+
+			/* there should only be regs remaining */
+			head = enqueue_reg(head, tok);
 		} while ((tok = strtok(NULL, " ")) != NULL);
 		printf("\n");
 	} while ((line = strtok_r(line_ptr, "\n", &line_ptr)) != NULL);
