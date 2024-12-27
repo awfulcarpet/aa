@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -55,6 +56,29 @@ strtok_r(char *buf, char *delim, char **save_ptr)
 	return NULL;
 }
 
+/* converts int version of decimal string into real decimal
+ * ex: dechex = 10
+ * returns 16
+*/
+static int
+strhex_to_dec(char *num, int len) {
+	int n = 0;
+	for (int i = 0; i < len; i++) {
+		int x = 0;
+		int e = len - i - 1;
+
+		if (num[i] >= '0' && num[i] <= '9') {
+			x = num[i] - '0';
+		}
+		if (num[i] >= 'a' && num[i] <= 'f') {
+			x = num[i] - 'a' + 10;
+		}
+
+		n += x * pow(16, e);
+	}
+	return n;
+}
+
 struct Token *
 tokenize(char *buf)
 {
@@ -70,9 +94,14 @@ tokenize(char *buf)
 			}
 
 			/* num */
-			/* for now treat the literal as binary */
 			if (tok[0] == '$') {
-				head = enqueue(head, NUM, atoi(&tok[1]));
+				int len = strlen(&tok[1]);
+				head = enqueue(head, NUM, strhex_to_dec(&tok[1], 2));
+
+				/* we have two byte num */
+				if (len > 2) {
+					head = enqueue(head, NUM, strhex_to_dec(&tok[3], 2));
+				}
 			}
 
 			printf("%s\n", tok);
@@ -88,7 +117,7 @@ void
 print_tokens(struct Token *head)
 {
 	while (head != NULL) {
-		printf("%d %d\n", head->type, head->val);
+		printf("%d %02x\n", head->type, head->val);
 		head = head->next;
 	}
 }

@@ -1,7 +1,7 @@
 WARNING = -Wall -Wextra -Wpedantic
 CFLAGS = -std=c99 -O0 $(WARNING)
 LDFLAGS =
-LDLIBS =
+LDLIBS = -lm
 
 OUTDIR = .build
 OBJ = \
