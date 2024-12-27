@@ -6,6 +6,7 @@ LDLIBS =
 OUTDIR = .build
 OBJ = \
 	  $(OUTDIR)/main.o \
+	  $(OUTDIR)/token.o \
 
 NAME = aa
 

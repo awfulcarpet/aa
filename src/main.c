@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "token.h"
+
 char *
 load_file(char *filename)
 {
@@ -31,7 +33,6 @@ main(int argc, char **argv)
 	}
 
 	char *file = load_file(argv[1]);
-	printf("%s", file);
-	printf("%lu\n", strlen(file));
+	struct Token *token_list = tokenize(file);
 	return 0;
 }
