@@ -4,6 +4,8 @@
 #include <string.h>
 
 #include "token.h"
+#include "opcode.h"
+extern char *optypes[];
 
 /* appends new token to linked list and returns head */
 struct Token *
@@ -123,9 +125,6 @@ tokenize(char *buf)
 				break;
 			}
 
-			printf("%s\n", tok);
-
-
 			/* two arg */
 			char *i = NULL;
 			if ((i = strchr(tok, ',')) != NULL) {
@@ -140,6 +139,7 @@ tokenize(char *buf)
 				} else {
 					head = enqueue_reg(head, i + 1);
 				}
+				continue;
 			}
 
 			/* num */
@@ -149,17 +149,14 @@ tokenize(char *buf)
 			}
 
 			/* is it a instruction? */
-			/* TODO: this is a temporary check */
-			if (strlen(tok) >= 2 && strlen(tok) <= 3 && strncmp(tok, "SP", 2)) {
-				/* TODO actually implement the opcode inside */
-				head = enqueue(head, INSTR, tok[0]);
+			if (strlen(tok) >= 2 && strlen(tok) <= 4 && strncmp(tok, "SP", strlen(tok))) {
+				head = enqueue(head, INSTR, get_optype(tok));
 				continue;
 			}
 
 			/* there should only be regs remaining */
 			head = enqueue_reg(head, tok);
 		} while ((tok = strtok(NULL, " ")) != NULL);
-		printf("\n");
 	} while ((line = strtok_r(line_ptr, "\n", &line_ptr)) != NULL);
 	return head;
 }
@@ -173,7 +170,11 @@ print_tokens(struct Token *head)
 		"REG",
 	};
 	while (head != NULL) {
-		printf("%s %02x\n", type[head->type], head->val);
+		if (head->type == INSTR) {
+			printf("%s %s\n", type[head->type], optypes[head->val]);
+
+		} else
+			printf("%s %d\n", type[head->type], head->val);
 		head = head->next;
 	}
 }

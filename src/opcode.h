@@ -5,3 +5,4 @@ struct Opcode {
 	uint8_t opcode;
 	uint8_t n_arg;
 };
+int get_optype(char *instr);

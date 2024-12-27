@@ -7,6 +7,7 @@ OUTDIR = .build
 OBJ = \
 	  $(OUTDIR)/main.o \
 	  $(OUTDIR)/token.o \
+	  $(OUTDIR)/opcode.o \
 
 NAME = aa
 
@@ -23,4 +24,4 @@ $(OUTDIR)/%.o: src/%.c
 	$(CC) -o $@ -c $^ $(CFLAGS)
 
 clean:
-	rm -rf $(OUTDIR) core
+	rm -rf $(OUTDIR) core log

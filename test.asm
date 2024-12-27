@@ -9,4 +9,5 @@ MVI B,$02
 IN $04
 INX B ; inc b to 1
 INX SP
+SPHL
 HLT ; stop cpu

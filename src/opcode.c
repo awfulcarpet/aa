@@ -1,6 +1,9 @@
 #include "opcode.h"
+#include <stdio.h>
+#include <string.h>
 
-char *optypes[] = {
+#define OPTYPE_LEN 78
+char *optypes[OPTYPE_LEN] = {
 	"ACI",
 	"ADC",
 	"ADD",
@@ -339,3 +342,25 @@ struct Opcode opcodes[256] = {
 	{ "CPI d8", 0xfe, 1 },
 	{ "RST 7", 0xff, 0 },
 };
+
+int
+get_optype(char *instr)
+{
+	int low = 0;
+	int high = OPTYPE_LEN;
+
+	while (low < high) {
+		int med = (high + low) / 2;
+
+		int res = strcmp(instr, optypes[med]);
+
+		if (res == 0)
+			return med;
+
+		if (res > 0)
+			low = med + 1;
+		if (res < 0)
+			high = med;
+	}
+	return 0;
+}
